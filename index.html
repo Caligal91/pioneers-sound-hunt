@@ -48,7 +48,11 @@
   <div id="overlay"></div>
   <div id="credit">Pictures: Microsoft Fluent Emoji (MIT) · Voice: ElevenLabs · © Pioneers Tutoring</div>
 </div>
+<script>/* per-sound data: sounds/<key>.js (Units 2+); s a t p use the built-in data */
+(function(){var k=(new URLSearchParams(location.search).get('sound')||'s').toLowerCase().replace(/[^a-z0-9-]/g,'');
+if(['s','a','t','p'].indexOf(k)<0) document.write('<script src="sounds/'+k+'.js?v=7"><\/script>');})();</script>
 <script src="scenes.js?v=4"></script>
-<script src="game.js?v=4"></script>
+<script src="game.js?v=7"></script>
+<script>(function(){var b=document.getElementById('badge');if(b&&b.textContent.length>=3)b.style.fontSize='clamp(12px,2vw,24px)';else if(b&&b.textContent.length==2)b.style.fontSize='clamp(15px,2.8vw,32px)';})();</script>
 </body>
 </html>

@@ -64,6 +64,9 @@
   <div id="overlay"></div>
   <div id="credit">Pictures: Microsoft Fluent Emoji (MIT) · Voice: ElevenLabs · © Pioneers Tutoring</div>
 </div>
+<script>/* per-sound data: sounds/<key>.js (Units 2+); s a t p use the built-in data */
+(function(){var k=(new URLSearchParams(location.search).get('sound')||'s').toLowerCase().replace(/[^a-z0-9-]/g,'');
+if(['s','a','t','p'].indexOf(k)<0) document.write('<script src="sounds/'+k+'.js?v=7"><\/script>');})();</script>
 <script>
 (function () {
   /* Each set: 8 secret words that start with the sound + 1 picture that does not. */
@@ -78,7 +81,10 @@
 
   const q = new URLSearchParams(location.search);
   const L = (q.get('sound') || 's').toLowerCase();
-  const SET = SETS[L] || SETS.s;
+  const SD = window.SOUND_DATA;
+  const SET = SD ? SD.listen : (SETS[L] || SETS.s);
+  const LABEL = SD ? SD.label : L;
+  const RULE = { start: 'start with', end: 'end with', has: 'have' }[(SD && SD.rule) || 'start'];
   let muted = q.get('mute') === '1';
   const slug = w => w.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
   const pic = w => 'img3d/' + (PIC[w] || slug(w)) + '.png';
@@ -86,7 +92,7 @@
   const board = document.getElementById('board'), found = document.getElementById('found'),
         overlay = document.getElementById('overlay'), ear = document.getElementById('ear'),
         stars = document.getElementById('stars'), muteBtn = document.getElementById('mute');
-  document.getElementById('badge').textContent = L;
+  document.getElementById('badge').textContent = LABEL;
 
   let secrets = [], round = 0, firstTry = 0, missed = false, busy = false, current = null, queue = [];
 
@@ -111,7 +117,8 @@
   }
   const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
   const ask = () => play(['f-' + slug(secrets[round])], 'Find the ' + secrets[round]);
-  const label = w => '<b>' + w[0] + '</b>' + w.slice(1);
+  const TL = SD ? ((SD.spot && SD.spot.letters) || SD.label) : L;
+  const label = w => { const i = w.indexOf(TL); return i < 0 ? '<b>' + w[0] + '</b>' + w.slice(1) : w.slice(0, i) + '<b>' + TL + '</b>' + w.slice(i + TL.length); };
 
   function build() {
     secrets = shuffle(SET.words).slice(0, ROUNDS); round = 0; firstTry = 0; missed = false; busy = false;
@@ -175,7 +182,7 @@
   }
   function intro() {
     overlay.innerHTML = '<div class="card"><img class="ear" src="img3d/ear.png" alt=""><h2>Listen for the secret word</h2>' +
-      '<p>All of these pictures start with <b style="color:var(--orange)">' + L + '</b>… except one!<br>Listen carefully and tap the word you hear.</p>' +
+      '<p>All of these pictures ' + RULE + ' <b style="color:var(--orange)">' + LABEL + '</b>… except one!<br>Listen carefully and tap the word you hear.</p>' +
       '<button class="btn" id="go">Play ▶</button></div>';
     overlay.style.display = 'flex';
     document.getElementById('go').onclick = start;
@@ -202,5 +209,6 @@
   }
 })();
 </script>
+<script>(function(){var b=document.getElementById('badge');if(b&&b.textContent.length>=3)b.style.fontSize='clamp(12px,2vw,24px)';else if(b&&b.textContent.length==2)b.style.fontSize='clamp(15px,2.8vw,32px)';})();</script>
 </body>
 </html>

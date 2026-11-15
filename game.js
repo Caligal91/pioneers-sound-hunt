@@ -71,7 +71,11 @@
   const params = new URLSearchParams(location.search);
   const key = (params.get('sound') || 's').toLowerCase();
   const ALL = window.SOUND_HUNT_SCENES || {};
-  const S = ALL[key] || ALL.s;
+  const SD = window.SOUND_DATA;
+  const S = SD ? Object.assign({ label: SD.label }, SD.hunt) : (ALL[key] || ALL.s);
+  const RULE = { start: 'start with', end: 'end with', has: 'have' }[(SD && SD.rule) || 'start'];
+  if (S.bgSvg) BG.custom = S.bgSvg, S.bg = 'custom';
+  if (SD && SD.say) Object.assign(SAY, SD.say);
   const $ = id => document.getElementById(id);
   const scene = $('scene'), countEl = $('count'), toast = $('toast'), overlay = $('overlay');
   let found = 0, muted = params.get('mute') === '1';
@@ -146,11 +150,11 @@
     }
   }
   function card(html) { overlay.innerHTML = '<div class="card">' + html + '</div>'; overlay.style.display = 'flex'; }
-  const introText = `Find all the things that start with the letter ${S.label}. Like ${S.hint}!`;
+  const introText = `Find all the things that ${RULE} ${S.label}. Like ${S.hint}!`;
   function start() { overlay.style.display = 'none'; build(); playClips(['intro-' + key], introText); }
   function finish() {
     confetti(); playClips(['well-done'], 'Well done! You found them all!');
-    card(`<div class="big">${S.label}</div><h1>Well done!</h1><p>You found all ${total} things that start with <b>${S.label}</b>.</p><button class="btn" id="again">Play again</button>`);
+    card(`<div class="big">${S.label}</div><h1>Well done!</h1><p>You found all ${total} things that ${RULE} <b>${S.label}</b>.</p><button class="btn" id="again">Play again</button>`);
     $('again').onclick = start;
   }
 
@@ -160,7 +164,7 @@
   $('mute').onclick = () => { muted = !muted; $('mute').textContent = muted ? '🔇' : '🔊'; if (muted) { if (current) current.pause(); if ('speechSynthesis' in window) speechSynthesis.cancel(); } };
   updateCount();
   scene.innerHTML = BG[S.bg];
-  card(`<div class="big">${S.label}</div><h1>Sound Hunt</h1><p>${S.title}: find all <b>${total}</b> things that start with <b>${S.label}</b>.<br>Tap each one you find!</p><button class="btn" id="go">Start</button>`);
+  card(`<div class="big">${S.label}</div><h1>Sound Hunt</h1><p>${S.title}: find all <b>${total}</b> things that ${RULE} <b>${S.label}</b>.<br>Tap each one you find!</p><button class="btn" id="go">Start</button>`);
   $('go').onclick = start;
   if (params.get('autostart') === '1') {          // for direct links and screenshots
     start();

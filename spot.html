@@ -62,17 +62,24 @@
   <div id="overlay"></div>
   <div id="credit">Pictures: Microsoft Fluent Emoji (MIT) · Voice: ElevenLabs · © Pioneers Tutoring</div>
 </div>
+<script>/* per-sound data: sounds/<key>.js (Units 2+); s a t p use the built-in data */
+(function(){var k=(new URLSearchParams(location.search).get('sound')||'s').toLowerCase().replace(/[^a-z0-9-]/g,'');
+if(['s','a','t','p'].indexOf(k)<0) document.write('<script src="sounds/'+k+'.js?v=7"><\/script>');})();</script>
 <script src="spot-words.js?v=1"></script>
 <script>
 (function () {
   const N = 10, N1 = 6;                         // 10 questions: 6 "starts with", then 4 "ends with" (or "in the middle" for a)
   const q = new URLSearchParams(location.search);
   const L = (q.get('sound') || 's').toLowerCase();
-  const D = window.SPOT_WORDS[L] || window.SPOT_WORDS.s;
+  const SD = window.SOUND_DATA;
+  const D = SD ? SD.spot : (window.SPOT_WORDS[L] || window.SPOT_WORDS.s);
+  const T = SD ? (SD.spot.letters || SD.label) : L;      // the letter(s) to spot
+  const KEY = SD ? SD.key : L;
+  const pos1 = D.pos1 || 'start';
   let muted = q.get('mute') === '1';
   const $ = id => document.getElementById(id);
   const right = $('right'), overlay = $('overlay'), dots = $('dots');
-  $('badge').textContent = L;
+  $('badge').textContent = SD ? SD.label : L;
 
   let Q = [], i = 0, firstTry = 0, missed = false, busy = false, current = null, queue = [];
 
@@ -93,21 +100,20 @@
   }
   const shuffle = a => { a = a.slice(); for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; };
   const pos2 = D.pos2;                              // 'end' or 'middle'
-  const qName = t => t === 'start' ? 'q-start-' + L : (pos2 === 'middle' ? 'q-mid-' + L : 'q-end-' + L);
-  const qText = t => t === 'start' ? 'Which word starts with <b style="color:var(--orange)">' + L + '</b>?'
-                   : pos2 === 'middle' ? 'Which word has <b style="color:var(--orange)">' + L + '</b> in the middle?'
-                   : 'Which word ends with <b style="color:var(--orange)">' + L + '</b>?';
-  const has = (w, t) => t === 'start' ? w[0] === L : t === 'end' ? w[w.length - 1] === L : (w.length === 3 && w[1] === L);
+  const qName = t => 'q-' + (t === 'middle' ? 'mid' : t) + '-' + KEY;
+  const B = x => '<b style="color:var(--orange)">' + x + '</b>';
+  const qText = t => t === 'start' ? 'Which word starts with ' + B(T) + '?' : t === 'middle' ? 'Which word has ' + B(T) + ' in the middle?' : 'Which word ends with ' + B(T) + '?';
+  const has = (w, t) => t === 'start' ? w.startsWith(T) : t === 'end' ? w.endsWith(T) : (w.indexOf(T, 1) > 0 && w.indexOf(T, 1) + T.length < w.length);
 
   function makeQuestions() {
     const out = [];
     const a1 = shuffle(D.first), a2 = shuffle(D.second);
     for (let k = 0; k < N; k++) {
-      const t = k < N1 ? 'start' : pos2;
-      const ans = t === 'start' ? a1[k % a1.length] : a2[(k - N1) % a2.length];
+      const t = k < N1 ? pos1 : pos2;
+      const ans = k < N1 ? a1[k % a1.length] : a2[(k - N1) % a2.length];
       // wrong answers: words without the letter in that place; sometimes one that has the letter somewhere else (to make the child look carefully)
       const pool = shuffle(D.other);
-      const tricky = shuffle(t === 'start' ? D.second : D.first).filter(w => !has(w, t));
+      const tricky = shuffle(k < N1 ? D.second : D.first).filter(w => !has(w, t));
       const wrong = (Math.random() < 0.6 && tricky.length ? [tricky[0]] : []).concat(pool).filter(w => w !== ans && !has(w, t)).slice(0, 3);
       out.push({ t, ans, opts: shuffle([ans].concat(wrong)) });
     }
@@ -119,9 +125,9 @@
   }
   function clue(t, len) {
     const n = 3, idx = t === 'start' ? 0 : t === 'end' ? n - 1 : 1;
-    $('clue').innerHTML = Array.from({ length: n }, (_, k) => '<div class="box' + (k === idx ? ' on' : '') + '">' + (k === idx ? L : '') + '</div>').join('');
+    $('clue').innerHTML = Array.from({ length: n }, (_, k) => '<div class="box' + (k === idx ? ' on' : '') + '"' + (k === idx && T.length > 1 ? ' style="width:auto;padding:0 .25em"' : '') + '>' + (k === idx ? T : '') + '</div>').join('');
   }
-  const mark = (w, t) => { const idx = t === 'start' ? 0 : t === 'end' ? w.length - 1 : 1; return w.slice(0, idx) + '<b>' + w[idx] + '</b>' + w.slice(idx + 1); };
+  const mark = (w, t) => { const idx = t === 'start' ? 0 : t === 'end' ? w.length - T.length : w.indexOf(T, 1); return w.slice(0, idx) + '<b>' + w.substr(idx, T.length) + '</b>' + w.slice(idx + T.length); };
 
   function show() {
     const Qi = Q[i]; missed = false; busy = false;
@@ -167,11 +173,11 @@
   function start() {
     overlay.style.display = 'none'; Q = makeQuestions(); i = 0; firstTry = 0;
     play(['s-intro'], 'Look at the letter. Find the word that has it in the right place. Tap a word to hear it.', () => setTimeout(show, 200));
-    $('qtext').innerHTML = qText('start'); clue('start'); right.innerHTML = ''; drawDots();
+    $('qtext').innerHTML = qText(pos1); clue(pos1); right.innerHTML = ''; drawDots();
   }
   function intro() {
-    Q = makeQuestions(); i = 0; drawDots(); $('qtext').innerHTML = qText('start'); clue('start');
-    overlay.innerHTML = '<div class="card"><img src="img3d/magnifier.png" alt=""><h2>Spot the letter</h2><p>Find the word with <b style="color:var(--orange)">' + L + '</b> in the right place.<br>Tap a word to hear it.</p><button class="btn" id="go">Play ▶</button></div>';
+    Q = makeQuestions(); i = 0; drawDots(); $('qtext').innerHTML = qText(pos1); clue(pos1);
+    overlay.innerHTML = '<div class="card"><img src="img3d/magnifier.png" alt=""><h2>Spot the letter</h2><p>Find the word with <b style="color:var(--orange)">' + T + '</b> in the right place.<br>Tap a word to hear it.</p><button class="btn" id="go">Play ▶</button></div>';
     overlay.style.display = 'flex'; $('go').onclick = start;
   }
   $('hear').onclick = () => { if (Q[i] && overlay.style.display === 'none') play([qName(Q[i].t)], $('qtext').textContent); };
@@ -194,5 +200,6 @@
   } else if (q.get('autostart') === '1') start(); else intro();
 })();
 </script>
+<script>(function(){var b=document.getElementById('badge');if(b&&b.textContent.length>=3)b.style.fontSize='clamp(12px,2vw,24px)';else if(b&&b.textContent.length==2)b.style.fontSize='clamp(15px,2.8vw,32px)';})();</script>
 </body>
 </html>
