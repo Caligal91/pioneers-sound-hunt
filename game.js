@@ -96,7 +96,7 @@
     queue = names.slice();
     const next = () => {
       if (!queue.length) return;
-      const a = new Audio('audio/' + queue.shift() + '.mp3?v=au1');
+      const a = new Audio('voice-au/' + queue.shift() + '.mp3');
       current = a;
       a.onended = next;
       a.onerror = () => { queue = []; speak(fallbackText); };
