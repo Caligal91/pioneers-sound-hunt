@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spot the Letter · Pioneers Learning Hub</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --orange:#ef7d22; --navy:#1f2a44; --blue:#3a9ee4; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; font-family:"Andika","Trebuchet MS",sans-serif; background:#f3f5f9; }
+  #wrap { position:relative; width:100%; max-width:1100px; margin:0 auto; aspect-ratio:16/9; max-height:100vh; overflow:hidden; border-radius:14px; box-shadow:0 4px 18px rgba(0,0,0,.15); user-select:none;
+    background:linear-gradient(160deg,#fff6ea 0%,#ffe7c9 100%); }
+  #top { position:absolute; left:3%; right:3%; top:3%; height:10%; display:flex; align-items:center; gap:1.5%; }
+  #badge { height:100%; aspect-ratio:1; border-radius:50%; background:var(--orange); border:4px solid #ffd34d; color:#fff; display:flex; align-items:center; justify-content:center; font-size:clamp(18px,3.4vw,38px); font-weight:bold; box-shadow:0 3px 8px rgba(0,0,0,.2); }
+  #top h1 { margin:0; color:var(--navy); font-size:clamp(16px,3vw,34px); white-space:nowrap; }
+  #dots { margin-left:auto; display:flex; gap:.6vw; }
+  .dot { width:clamp(16px,2.6vw,30px); aspect-ratio:1; border-radius:50%; background:#f3d3b0; color:#fff; font-size:clamp(9px,1.3vw,15px); display:flex; align-items:center; justify-content:center; font-weight:bold; }
+  .dot.now { background:var(--blue); box-shadow:0 0 0 3px #bfe0f7; }
+  .dot.g { background:#2ecc71; } .dot.o { background:#f5a623; }
+  #mute { width:clamp(24px,4vw,44px); aspect-ratio:1; border:none; border-radius:50%; background:#fff; font-size:clamp(12px,1.8vw,22px); cursor:pointer; box-shadow:0 2px 5px rgba(0,0,0,.12); }
+  #left { position:absolute; left:3%; top:16%; width:58%; height:80%; background:#fff; border-radius:26px; box-shadow:0 3px 10px rgba(0,0,0,.08); display:flex; flex-direction:column; align-items:center; justify-content:space-around; padding:2% 3%; }
+  #q { display:flex; align-items:center; gap:2%; width:100%; justify-content:center; }
+  #q span { color:var(--navy); font-size:clamp(17px,3.1vw,36px); font-weight:bold; text-align:center; }
+  #hear { border:none; background:var(--blue); color:#fff; border-radius:50%; width:clamp(30px,5vw,56px); aspect-ratio:1; font-size:clamp(14px,2.2vw,26px); cursor:pointer; box-shadow:0 3px 0 #1f6fa8; flex:none; }
+  #clue { display:flex; gap:3%; justify-content:center; width:100%; }
+  .box { width:clamp(46px,9vw,104px); aspect-ratio:1; border-radius:16px; border:4px dashed #c9d3e0; display:flex; align-items:center; justify-content:center; font-size:clamp(34px,7vw,84px); font-weight:bold; color:#c9d3e0; }
+  .box.on { border:4px solid var(--orange); background:#fff2e5; color:var(--orange); }
+  #mag { width:16%; }
+  #right { position:absolute; right:3%; top:16%; width:33%; height:80%; display:flex; flex-direction:column; gap:3.5%; }
+  .w { position:relative; flex:1; border:none; border-radius:20px; background:var(--blue); color:#fff; font-family:inherit; font-size:clamp(22px,4.4vw,52px); font-weight:bold; text-align:left; padding:0 8%; cursor:pointer; box-shadow:0 4px 0 #1f6fa8; transition:background .2s; letter-spacing:.04em; }
+  .w .ear { position:absolute; right:5%; top:50%; transform:translateY(-50%); font-size:clamp(12px,2vw,24px); opacity:.85; }
+  .w.sel { background:#ffd34d; color:var(--navy); box-shadow:0 4px 0 #c9a227; }
+  .w.right { background:#2ecc71; color:#fff; box-shadow:0 4px 0 #1e9c55; animation:pop .45s; }
+  .w.right b { color:#fff3a8; text-decoration:underline; text-decoration-thickness:4px; text-underline-offset:6px; }
+  .w.wrong { background:#e9edf2; color:#9aa6b4; box-shadow:none; animation:shake .45s; pointer-events:none; }
+  @keyframes pop { 50% { transform:scale(1.06); } }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4%)} 50%{transform:translateX(4%)} 75%{transform:translateX(-2%)} }
+  #check { position:absolute; left:3%; bottom:6.5%; display:none; }
+  .btn { background:var(--orange); color:#fff; border:none; border-radius:40px; padding:.4em 1.4em; font-size:clamp(15px,2.5vw,28px); font-family:inherit; font-weight:bold; cursor:pointer; box-shadow:0 3px 0 #b85c12; }
+  .btn:active { transform:translateY(2px); box-shadow:none; }
+  #overlay { position:absolute; inset:0; z-index:10; background:rgba(31,42,68,.75); display:flex; align-items:center; justify-content:center; }
+  #overlay .card { background:#fff; border-radius:20px; padding:3.5% 6%; text-align:center; max-width:82%; }
+  #overlay h2 { margin:.1em 0; color:var(--navy); font-size:clamp(22px,4.2vw,48px); }
+  #overlay p { color:#455; font-size:clamp(14px,2.2vw,25px); margin:.4em 0 .8em; }
+  #overlay img { width:clamp(50px,10vw,110px); }
+  #overlay .big { font-size:clamp(46px,9vw,110px); line-height:1; }
+  .confetti { position:absolute; width:1.2%; aspect-ratio:1; top:-3%; z-index:11; animation:fall linear forwards; border-radius:2px; }
+  @keyframes fall { to { transform:translateY(110vh) rotate(720deg); } }
+  #credit { position:absolute; bottom:.8%; left:3.5%; font-size:9px; color:rgba(0,0,0,.35); font-family:sans-serif; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="top"><div id="badge"></div><h1>Spot the letter</h1><div id="dots"></div><button id="mute" title="Sound on/off" aria-label="Sound on or off">🔊</button></div>
+  <div id="left">
+    <div id="q"><span id="qtext"></span><button id="hear" title="Hear the question" aria-label="Hear the question">🔊</button></div>
+    <div id="clue"></div>
+    <img id="mag" src="img3d/magnifier.png" alt="">
+  </div>
+  <div id="right"></div>
+  <div id="overlay"></div>
+  <div id="credit">Pictures: Microsoft Fluent Emoji (MIT) · Voice: ElevenLabs · © Pioneers Tutoring</div>
+</div>
+<script src="spot-words.js?v=1"></script>
+<script>
+(function () {
+  const N = 10, N1 = 6;                         // 10 questions: 6 "starts with", then 4 "ends with" (or "in the middle" for a)
+  const q = new URLSearchParams(location.search);
+  const L = (q.get('sound') || 's').toLowerCase();
+  const D = window.SPOT_WORDS[L] || window.SPOT_WORDS.s;
+  let muted = q.get('mute') === '1';
+  const $ = id => document.getElementById(id);
+  const right = $('right'), overlay = $('overlay'), dots = $('dots');
+  $('badge').textContent = L;
+
+  let Q = [], i = 0, firstTry = 0, missed = false, busy = false, current = null, queue = [];
+
+  function speak(t) { if (muted || !t || !('speechSynthesis' in window)) return; const u = new SpeechSynthesisUtterance(t); u.lang = 'en-AU'; u.rate = 0.75; speechSynthesis.speak(u); }
+  function play(names, fallback, done) {
+    if (current) { current.onended = null; current.pause(); current = null; }
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+    if (muted) { if (done) setTimeout(done, 700); return; }
+    queue = names.slice();
+    const next = () => {
+      if (!queue.length) { if (done) done(); return; }
+      const a = new Audio('voice-au/' + queue.shift() + '.mp3?v=6');
+      current = a; a.onended = next;
+      a.onerror = () => { queue = []; speak(fallback); if (done) setTimeout(done, 1500); };
+      const p = a.play(); if (p && p.catch) p.catch(() => { queue = []; if (done) done(); });
+    };
+    next();
+  }
+  const shuffle = a => { a = a.slice(); for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; };
+  const pos2 = D.pos2;                              // 'end' or 'middle'
+  const qName = t => t === 'start' ? 'q-start-' + L : (pos2 === 'middle' ? 'q-mid-' + L : 'q-end-' + L);
+  const qText = t => t === 'start' ? 'Which word starts with <b style="color:var(--orange)">' + L + '</b>?'
+                   : pos2 === 'middle' ? 'Which word has <b style="color:var(--orange)">' + L + '</b> in the middle?'
+                   : 'Which word ends with <b style="color:var(--orange)">' + L + '</b>?';
+  const has = (w, t) => t === 'start' ? w[0] === L : t === 'end' ? w[w.length - 1] === L : (w.length === 3 && w[1] === L);
+
+  function makeQuestions() {
+    const out = [];
+    const a1 = shuffle(D.first), a2 = shuffle(D.second);
+    for (let k = 0; k < N; k++) {
+      const t = k < N1 ? 'start' : pos2;
+      const ans = t === 'start' ? a1[k % a1.length] : a2[(k - N1) % a2.length];
+      // wrong answers: words without the letter in that place; sometimes one that has the letter somewhere else (to make the child look carefully)
+      const pool = shuffle(D.other);
+      const tricky = shuffle(t === 'start' ? D.second : D.first).filter(w => !has(w, t));
+      const wrong = (Math.random() < 0.6 && tricky.length ? [tricky[0]] : []).concat(pool).filter(w => w !== ans && !has(w, t)).slice(0, 3);
+      out.push({ t, ans, opts: shuffle([ans].concat(wrong)) });
+    }
+    return out;
+  }
+  function drawDots() {
+    dots.innerHTML = '';
+    for (let k = 0; k < N; k++) { const d = document.createElement('div'); d.className = 'dot' + (k === i ? ' now' : '') + (Q[k] && Q[k].res ? ' ' + Q[k].res : ''); d.textContent = k + 1; dots.appendChild(d); }
+  }
+  function clue(t, len) {
+    const n = 3, idx = t === 'start' ? 0 : t === 'end' ? n - 1 : 1;
+    $('clue').innerHTML = Array.from({ length: n }, (_, k) => '<div class="box' + (k === idx ? ' on' : '') + '">' + (k === idx ? L : '') + '</div>').join('');
+  }
+  const mark = (w, t) => { const idx = t === 'start' ? 0 : t === 'end' ? w.length - 1 : 1; return w.slice(0, idx) + '<b>' + w[idx] + '</b>' + w.slice(idx + 1); };
+
+  function show() {
+    const Qi = Q[i]; missed = false; busy = false;
+    $('qtext').innerHTML = qText(Qi.t); clue(Qi.t);
+    right.innerHTML = '';
+    Qi.opts.forEach(w => {
+      const b = document.createElement('button'); b.className = 'w'; b.dataset.w = w;
+      b.innerHTML = '<span class="txt">' + w + '</span><span class="ear">🔊</span>';
+      b.onclick = () => choose(b);
+      right.appendChild(b);
+    });
+    drawDots();
+    play([qName(Qi.t)], $('qtext').textContent);
+  }
+  function choose(b) {
+    if (busy) return;
+    const Qi = Q[i], w = b.dataset.w;
+    if (w === Qi.ans) {
+      busy = true;
+      if (!missed) firstTry++;
+      Qi.res = missed ? 'o' : 'g';
+      b.classList.add('right'); b.querySelector('.txt').innerHTML = mark(w, Qi.t);
+      [...right.children].forEach(x => { if (x !== b) x.style.opacity = .35; });
+      drawDots();
+      play(['w-' + w, 'l-yes-' + (1 + Math.floor(Math.random() * 3))], w + '! Yes!', () => setTimeout(() => { i++; if (i >= N) finish(); else show(); }, 500));
+    } else {
+      missed = true;
+      b.classList.add('wrong');
+      play(['w-' + w, 's-try'], w + '. Not quite. Look again!');
+    }
+  }
+  function confetti() {
+    const wrap = $('wrap'), cols = ['#ef7d22', '#ffd34d', '#2ecc71', '#3a9ee4', '#e74c3c'];
+    for (let k = 0; k < 70; k++) { const c = document.createElement('div'); c.className = 'confetti'; c.style.left = Math.random() * 100 + '%'; c.style.background = cols[k % cols.length];
+      c.style.animationDuration = (1.8 + Math.random() * 1.8) + 's'; c.style.animationDelay = Math.random() * .6 + 's'; wrap.appendChild(c); setTimeout(() => c.remove(), 4500); }
+  }
+  function finish() {
+    drawDots(); confetti();
+    play(['s-done'], 'Super spotting! You finished all ten!');
+    overlay.innerHTML = '<div class="card"><div class="big">⭐</div><h2>Super spotting!</h2><p>You finished all ' + N + ' questions.<br>First try: ' + firstTry + ' / ' + N + '</p><button class="btn" id="again">Play again</button></div>';
+    overlay.style.display = 'flex'; $('again').onclick = start;
+  }
+  function start() {
+    overlay.style.display = 'none'; Q = makeQuestions(); i = 0; firstTry = 0;
+    play(['s-intro'], 'Look at the letter. Find the word that has it in the right place. Tap a word to hear it.', () => setTimeout(show, 200));
+    $('qtext').innerHTML = qText('start'); clue('start'); right.innerHTML = ''; drawDots();
+  }
+  function intro() {
+    Q = makeQuestions(); i = 0; drawDots(); $('qtext').innerHTML = qText('start'); clue('start');
+    overlay.innerHTML = '<div class="card"><img src="img3d/magnifier.png" alt=""><h2>Spot the letter</h2><p>Find the word with <b style="color:var(--orange)">' + L + '</b> in the right place.<br>Tap a word to hear it.</p><button class="btn" id="go">Play ▶</button></div>';
+    overlay.style.display = 'flex'; $('go').onclick = start;
+  }
+  $('hear').onclick = () => { if (Q[i] && overlay.style.display === 'none') play([qName(Q[i].t)], $('qtext').textContent); };
+  $('mute').textContent = muted ? '🔇' : '🔊';
+  $('mute').onclick = () => { muted = !muted; $('mute').textContent = muted ? '🔇' : '🔊'; if (muted && current) current.pause(); };
+
+  // demo=N answers N questions automatically (for screenshots); wrong=1 makes one wrong tap first
+  const demo = parseInt(q.get('demo') || '0', 10);
+  if (demo) {
+    muted = true; Q = makeQuestions(); i = 0; overlay.style.display = 'none'; show();
+    let n = 0;
+    const step = () => {
+      if (n >= demo || i >= N) return;
+      if (busy) return setTimeout(step, 200);
+      const bs = [...right.children];
+      if (q.get('wrong') === '1' && n === demo - 1 && !missed) { choose(bs.find(x => x.dataset.w !== Q[i].ans)); return setTimeout(step, 600); }
+      choose(bs.find(x => x.dataset.w === Q[i].ans)); n++; setTimeout(step, 1600);
+    };
+    setTimeout(step, 300);
+  } else if (q.get('autostart') === '1') start(); else intro();
+})();
+</script>
+</body>
+</html>
