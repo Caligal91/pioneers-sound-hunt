@@ -34,12 +34,12 @@
       <path d="M116 19 Q126 45 120 90 L160 90 L160 19 Z" fill="#f6dda3"/><path d="M116 19 Q126 45 120 90" stroke="#fff" stroke-width=".8" fill="none" opacity=".8"/>
       <rect x="122" y="66" width="16" height="7" rx="1" fill="#e74c3c" opacity=".85"/><rect x="122" y="68" width="16" height="1.4" fill="#fff" opacity=".8"/></svg>`,
     park: `<svg viewBox="0 0 160 90" preserveAspectRatio="none" width="100%" height="100%">
-      <rect width="160" height="90" fill="#bfe8ff"/>
+      <defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6ec6f5"/><stop offset="1" stop-color="#d9f4ff"/></linearGradient><linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd16b"/><stop offset="1" stop-color="#4f9a33"/></linearGradient><radialGradient id="tr" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#51cf66"/><stop offset="1" stop-color="#2b8a3e"/></radialGradient></defs><rect width="160" height="90" fill="url(#sk)"/>
       <path d="M0 30 Q30 20 60 27 T120 24 T160 27 V32 H0Z" fill="#a3d977"/>
       <rect y="30" width="160" height="9" fill="#7b8794"/><path d="M0 34.5 H160" stroke="#fff" stroke-width=".5" stroke-dasharray="5 4"/>
-      <rect y="39" width="160" height="51" fill="#7cc95a"/>
+      <rect y="39" width="160" height="51" fill="url(#gr)"/>
       <path d="M0 52 Q50 46 100 52 T160 50 V90 H0Z" fill="#6dbb4b"/>
-      <rect x="14" y="26" width="5" height="34" fill="#8b5a2b"/><circle cx="16" cy="24" r="14" fill="#2f9e44"/><circle cx="8" cy="30" r="8" fill="#37b24d"/><circle cx="26" cy="30" r="8" fill="#37b24d"/>
+      <rect x="14" y="26" width="5" height="34" fill="#8b5a2b"/><circle cx="16" cy="24" r="14" fill="url(#tr)"/><circle cx="8" cy="30" r="8" fill="url(#tr)"/><circle cx="26" cy="30" r="8" fill="url(#tr)"/>
       <ellipse cx="136" cy="76" rx="26" ry="10" fill="#4dabf7"/><ellipse cx="136" cy="74" rx="20" ry="6" fill="#74c0fc" opacity=".6"/>
       <rect x="34" y="69" width="60" height="18" fill="#fff"/>
       <g fill="#e03131"><rect x="34" y="69" width="7.5" height="4.5"/><rect x="49" y="69" width="7.5" height="4.5"/><rect x="64" y="69" width="7.5" height="4.5"/><rect x="79" y="69" width="7.5" height="4.5"/>
@@ -49,19 +49,19 @@
       <ellipse cx="10" cy="66" rx="7" ry="2.5" fill="#a0522d"/><rect x="5" y="62" width="10" height="4" fill="#8b5a2b"/>
       <g fill="#fff3bf"><circle cx="112" cy="48" r="1"/><circle cx="30" cy="56" r="1"/><circle cx="150" cy="55" r="1"/></g></svg>`,
     town: `<svg viewBox="0 0 160 90" preserveAspectRatio="none" width="100%" height="100%">
-      <rect width="160" height="90" fill="#cdeeff"/>
+      <defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6ec6f5"/><stop offset="1" stop-color="#d9f4ff"/></linearGradient><linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd16b"/><stop offset="1" stop-color="#4f9a33"/></linearGradient><radialGradient id="tr" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#51cf66"/><stop offset="1" stop-color="#2b8a3e"/></radialGradient></defs><rect width="160" height="90" fill="url(#sk)"/>
       <rect y="17" width="160" height="2.2" fill="#6c757d"/><g fill="#868e96"><rect x="10" y="19" width="3" height="5"/><rect x="50" y="19" width="3" height="5"/><rect x="90" y="19" width="3" height="5"/><rect x="130" y="19" width="3" height="5"/></g>
       <rect x="0" y="22" width="34" height="22" fill="#ffd8a8"/><rect x="34" y="22" width="30" height="22" fill="#d0ebff"/><rect x="64" y="22" width="34" height="22" fill="#e5dbff"/><rect x="98" y="22" width="30" height="22" fill="#d3f9d8"/><rect x="128" y="22" width="32" height="22" fill="#ffe3e3"/>
       <g fill="#fff" stroke="#adb5bd" stroke-width=".5"><rect x="5" y="25" width="25" height="12"/><rect x="38" y="25" width="22" height="12"/><rect x="104" y="25" width="20" height="12"/><rect x="133" y="25" width="22" height="12"/></g>
       <circle cx="75" cy="27" r="6" fill="#fff" stroke="#74c0fc" stroke-width=".8"/><rect x="80" y="35" width="10" height="9" fill="#845ef7"/>
       <rect y="44" width="160" height="7" fill="#dee2e6"/><rect x="50" y="41" width="14" height="5" fill="#f08c00"/><path d="M50 41 L57 38 L64 41Z" fill="#e8590c"/>
       <rect y="51" width="160" height="18" fill="#495057"/><path d="M0 60 H160" stroke="#fff" stroke-width=".8" stroke-dasharray="6 5"/>
-      <rect y="69" width="160" height="21" fill="#8ce99a"/><ellipse cx="118" cy="82" rx="12" ry="4.5" fill="#4dabf7"/>
+      <rect y="69" width="160" height="21" fill="url(#gr)"/><ellipse cx="118" cy="82" rx="12" ry="4.5" fill="#4dabf7"/>
       <g fill="#2f9e44"><circle cx="64" cy="74" r="3"/><circle cx="150" cy="73" r="3"/></g></svg>`,
     farm: `<svg viewBox="0 0 160 90" preserveAspectRatio="none" width="100%" height="100%">
-      <rect width="160" height="90" fill="#c5ecff"/>
+      <defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6ec6f5"/><stop offset="1" stop-color="#d9f4ff"/></linearGradient><linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd16b"/><stop offset="1" stop-color="#4f9a33"/></linearGradient><radialGradient id="tr" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#51cf66"/><stop offset="1" stop-color="#2b8a3e"/></radialGradient></defs><rect width="160" height="90" fill="url(#sk)"/>
       <path d="M0 34 Q40 24 80 31 T160 28 V90 H0Z" fill="#b2dd7a"/><path d="M0 56 Q60 50 110 57 T160 55 V90 H0Z" fill="#94d06a"/>
-      <rect x="20" y="22" width="5" height="34" fill="#8b5a2b"/><circle cx="22" cy="20" r="13" fill="#2b8a3e"/><circle cx="12" cy="27" r="7" fill="#37b24d"/><circle cx="33" cy="26" r="8" fill="#37b24d"/>
+      <rect x="20" y="22" width="5" height="34" fill="#8b5a2b"/><circle cx="22" cy="20" r="13" fill="url(#tr)"/><circle cx="12" cy="27" r="7" fill="url(#tr)"/><circle cx="33" cy="26" r="8" fill="url(#tr)"/>
       <rect x="116" y="18" width="34" height="24" fill="#f1f3f5"/><path d="M112 19 L133 6 L154 19Z" fill="#c92a2a"/><rect x="127" y="27" width="12" height="9" fill="#a5d8ff" stroke="#495057" stroke-width=".6"/><rect x="141" y="31" width="6" height="11" fill="#862e9c"/>
       <g stroke="#a0522d" stroke-width="1.2"><path d="M0 64 H46"/><path d="M0 68 H46"/></g><g stroke="#a0522d" stroke-width="1.5"><path d="M4 61 V74"/><path d="M18 61 V74"/><path d="M32 61 V74"/><path d="M46 61 V74"/></g>
       <ellipse cx="20" cy="76" rx="18" ry="7" fill="#8d6e63"/>
@@ -118,7 +118,7 @@
       b.style.left = it.x + '%'; b.style.top = it.y + '%'; b.style.width = (it.s || 7) + '%';
       b.dataset.target = it.t ? '1' : '0';
       b.setAttribute('aria-label', word(it.w));
-      b.innerHTML = `<img src="img/${IMG[it.w]}.svg" alt="${word(it.w)}"${it.flip ? ' style="transform:scaleX(-1)"' : ''}><img class="star" src="img/2b50.svg" alt="">`;
+      b.innerHTML = `<img src="img3d/${slug(it.w)}.png" alt="${word(it.w)}"${it.flip ? ' style="transform:scaleX(-1)"' : ''}><img class="star" src="img3d/star.png" alt="">`;
       b.onclick = () => {
         if (b.classList.contains('found')) return;
         if (it.t) {
