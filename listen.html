@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Listen for the Secret Word · Pioneers Learning Hub</title>
+<style>
+  :root { --orange:#ef7d22; --navy:#1f2a44; --sky:#dcebf7; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; font-family:"Andika","Comic Sans MS","Trebuchet MS",sans-serif; background:#f3f5f9; }
+  #wrap { position:relative; width:100%; max-width:1100px; margin:0 auto; aspect-ratio:16/9; max-height:100vh; overflow:hidden; border-radius:14px; box-shadow:0 4px 18px rgba(0,0,0,.15); user-select:none;
+    background:linear-gradient(160deg,#e6f1fb 0%,#cfe3f4 100%); }
+  #title { position:absolute; left:3%; top:2.5%; height:11%; display:flex; align-items:center; gap:2%; width:70%; }
+  #badge { height:100%; aspect-ratio:1; border-radius:50%; background:var(--orange); border:4px solid #ffd34d; color:#fff; display:flex; align-items:center; justify-content:center; font-size:clamp(18px,3.6vw,40px); font-weight:bold; box-shadow:0 3px 8px rgba(0,0,0,.2); }
+  #title h1 { margin:0; color:#fff; font-size:clamp(18px,3.7vw,42px); font-style:italic; text-shadow:0 2px 0 #7fa9cf, 0 3px 6px rgba(0,0,0,.25); white-space:nowrap; }
+  #board { position:absolute; left:3%; top:16%; width:66%; height:80%; background:#fff; border-radius:28px; box-shadow:0 3px 10px rgba(0,0,0,.08); display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:repeat(3,minmax(0,1fr)); padding:2%; gap:2%; }
+  .pic { position:relative; min-height:0; min-width:0; border:none; background:none; padding:3%; cursor:pointer; border-radius:18px; transition:transform .15s, opacity .4s; }
+  .pic img { width:100%; height:100%; object-fit:contain; pointer-events:none; filter:drop-shadow(0 3px 2px rgba(0,0,0,.25)); }
+  .pic:hover { transform:scale(1.06); background:#f4f8fc; }
+  .pic.right { background:#e5f8ec; box-shadow:inset 0 0 0 5px #2ecc71; animation:pop .45s ease; }
+  .pic.gone { opacity:.18; pointer-events:none; }
+  .pic.wrong { animation:shake .45s; background:#fde9e7; }
+  @keyframes pop { 50% { transform:scale(1.18); } }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8%) rotate(-6deg)} 40%{transform:translateX(8%) rotate(6deg)} 60%{transform:translateX(-5%)} 80%{transform:translateX(5%)} }
+  #side { position:absolute; right:3%; top:3%; width:25%; height:93%; display:flex; flex-direction:column; align-items:center; gap:3%; }
+  #ear { width:42%; aspect-ratio:1; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(0,0,0,.12); }
+  #ear img { width:70%; }
+  #ear.talk { animation:pulse 1s ease infinite; }
+  @keyframes pulse { 50% { box-shadow:0 0 0 10px rgba(239,125,34,.25); } }
+  #repeat { width:100%; background:#3a9ee4; color:#fff; border:none; border-radius:14px; padding:6% 0; font-family:inherit; font-weight:bold; font-size:clamp(14px,2.3vw,28px); cursor:pointer; box-shadow:0 4px 0 #1f6fa8; }
+  #repeat:active { transform:translateY(3px); box-shadow:none; }
+  #found { width:100%; flex:1; background:#fff; border-radius:24px; box-shadow:0 3px 10px rgba(0,0,0,.08); padding:6% 5%; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-auto-rows:min-content; gap:4% 3%; align-content:start; }
+  #found .f { text-align:center; animation:pop .45s ease; }
+  #found img { width:78%; aspect-ratio:1; object-fit:contain; }
+  #found span { display:block; color:var(--navy); font-weight:bold; font-size:clamp(10px,1.5vw,18px); line-height:1.1; }
+  #found span b { color:var(--orange); }
+  #stars { font-size:clamp(12px,2vw,24px); color:var(--navy); font-weight:bold; }
+  #overlay { position:absolute; inset:0; z-index:10; background:rgba(31,42,68,.75); display:flex; align-items:center; justify-content:center; }
+  #overlay .card { background:#fff; border-radius:20px; padding:3.5% 6%; text-align:center; max-width:82%; }
+  #overlay h2 { margin:.1em 0; color:var(--navy); font-size:clamp(22px,4.2vw,48px); }
+  #overlay p { color:#455; font-size:clamp(14px,2.2vw,25px); margin:.4em 0 .8em; }
+  #overlay .big { font-size:clamp(46px,9vw,110px); color:var(--orange); font-weight:bold; line-height:1; }
+  #overlay .ear { width:clamp(50px,10vw,110px); }
+  .btn { background:var(--orange); color:#fff; border:none; border-radius:40px; padding:.45em 1.4em; font-size:clamp(16px,2.6vw,30px); font-family:inherit; font-weight:bold; cursor:pointer; box-shadow:0 3px 0 #b85c12; }
+  .btn:active { transform:translateY(2px); box-shadow:none; }
+  #mute { position:absolute; top:3%; right:30%; z-index:6; background:rgba(255,255,255,.85); border:none; border-radius:50%; width:5%; aspect-ratio:1; font-size:clamp(13px,2vw,24px); cursor:pointer; }
+  .confetti { position:absolute; width:1.2%; aspect-ratio:1; top:-3%; z-index:11; animation:fall linear forwards; border-radius:2px; }
+  @keyframes fall { to { transform:translateY(110vh) rotate(720deg); } }
+  #credit { position:absolute; bottom:.6%; left:3.5%; font-size:9px; color:rgba(0,0,0,.35); font-family:sans-serif; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <div id="title"><div id="badge"></div><h1>Listen for the secret word</h1></div>
+  <button id="mute" title="Sound on/off" aria-label="Sound on or off">🔊</button>
+  <div id="board"></div>
+  <div id="side">
+    <div id="ear"><img src="img3d/ear.png" alt=""></div>
+    <button id="repeat">🔊 Hear it again</button>
+    <div id="stars"></div>
+    <div id="found"></div>
+  </div>
+  <div id="overlay"></div>
+  <div id="credit">Pictures: Microsoft Fluent Emoji (MIT) · Voice: ElevenLabs · © Pioneers Tutoring</div>
+</div>
+<script>
+(function () {
+  /* Each set: 8 secret words that start with the sound + 1 picture that does not. */
+  const SETS = {
+    s: { words: ['sun','socks','soap','seal','snail','spoon','sandwich','sailboat'], other: 'fish' },
+    a: { words: ['apple','ant','axe','anchor','ambulance','acrobat','arrow','avocado'], other: 'cat' },
+    t: { words: ['tiger','tent','teddy','taxi','tooth','turtle','teapot','tomato'], other: 'dog' },
+    p: { words: ['pig','pear','pie','pen','panda','penguin','pizza','pumpkin'], other: 'cow' }
+  };
+  const PIC = { arrow: 'bow-and-arrow' };      // picture file when it differs from the word
+  const ROUNDS = 6;
+
+  const q = new URLSearchParams(location.search);
+  const L = (q.get('sound') || 's').toLowerCase();
+  const SET = SETS[L] || SETS.s;
+  let muted = q.get('mute') === '1';
+  const slug = w => w.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const pic = w => 'img3d/' + (PIC[w] || slug(w)) + '.png';
+
+  const board = document.getElementById('board'), found = document.getElementById('found'),
+        overlay = document.getElementById('overlay'), ear = document.getElementById('ear'),
+        stars = document.getElementById('stars'), muteBtn = document.getElementById('mute');
+  document.getElementById('badge').textContent = L;
+
+  let secrets = [], round = 0, firstTry = 0, missed = false, busy = false, current = null, queue = [];
+
+  function speak(text) {
+    if (muted || !text || !('speechSynthesis' in window)) return;
+    const u = new SpeechSynthesisUtterance(text); u.lang = 'en-AU'; u.rate = 0.75; speechSynthesis.speak(u);
+  }
+  function play(names, fallback, done) {
+    if (current) { current.onended = null; current.pause(); current = null; }
+    if ('speechSynthesis' in window) speechSynthesis.cancel();
+    if (muted) { if (done) setTimeout(done, 600); return; }
+    queue = names.slice(); ear.classList.add('talk');
+    const finish = () => { ear.classList.remove('talk'); if (done) done(); };
+    const next = () => {
+      if (!queue.length) return finish();
+      const a = new Audio('voice-au/' + queue.shift() + '.mp3?v=5');
+      current = a; a.onended = next;
+      a.onerror = () => { queue = []; speak(fallback); setTimeout(finish, 1500); };
+      const p = a.play(); if (p && p.catch) p.catch(() => { queue = []; finish(); });
+    };
+    next();
+  }
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const ask = () => play(['f-' + slug(secrets[round])], 'Find the ' + secrets[round]);
+  const label = w => '<b>' + w[0] + '</b>' + w.slice(1);
+
+  function build() {
+    secrets = shuffle(SET.words).slice(0, ROUNDS); round = 0; firstTry = 0; missed = false; busy = false;
+    found.innerHTML = ''; updateStars();
+    board.innerHTML = '';
+    shuffle(SET.words.concat(SET.other)).forEach(w => {
+      const b = document.createElement('button');
+      b.className = 'pic'; b.dataset.w = w; b.setAttribute('aria-label', w);
+      b.innerHTML = '<img src="' + pic(w) + '" alt="' + w + '">';
+      b.onclick = () => choose(b);
+      board.appendChild(b);
+    });
+  }
+  function updateStars() { stars.textContent = '⭐ ' + round + ' / ' + ROUNDS; }
+
+  function choose(b) {
+    if (busy) return;
+    const w = b.dataset.w;
+    if (w === secrets[round]) {
+      busy = true;
+      if (!missed) firstTry++;
+      b.classList.add('right');
+      const f = document.createElement('div'); f.className = 'f';
+      f.innerHTML = '<img src="' + pic(w) + '" alt=""><span>' + label(w) + '</span>';
+      found.appendChild(f);
+      round++; missed = false; updateStars();
+      const praise = 'l-yes-' + (1 + Math.floor(Math.random() * 3));
+      play([praise, 'w-' + slug(w)], 'Yes! ' + w, () => {
+        b.classList.remove('right'); b.classList.add('gone');
+        if (round >= ROUNDS) return finish();
+        busy = false; setTimeout(ask, 300);
+      });
+    } else {
+      missed = true;
+      b.classList.remove('wrong'); void b.offsetWidth; b.classList.add('wrong');
+      play(['l-oops', 'f-' + slug(secrets[round])], 'Oops! Not that one. Find the ' + secrets[round]);
+    }
+  }
+
+  function confetti() {
+    const wrap = document.getElementById('wrap'), cols = ['#ef7d22', '#ffd34d', '#2ecc71', '#3a9ee4', '#e74c3c'];
+    for (let i = 0; i < 70; i++) {
+      const c = document.createElement('div'); c.className = 'confetti';
+      c.style.left = Math.random() * 100 + '%'; c.style.background = cols[i % cols.length];
+      c.style.animationDuration = (1.8 + Math.random() * 1.8) + 's'; c.style.animationDelay = Math.random() * .6 + 's';
+      wrap.appendChild(c); setTimeout(() => c.remove(), 4500);
+    }
+  }
+  function finish() {
+    confetti();
+    play(['l-done'], 'Great listening! You found all the secret words!');
+    overlay.innerHTML = '<div class="card"><div class="big">⭐</div><h2>Great listening!</h2>' +
+      '<p>You found all ' + ROUNDS + ' secret words.<br>First try: ' + firstTry + ' / ' + ROUNDS + '</p>' +
+      '<button class="btn" id="again">Play again</button></div>';
+    overlay.style.display = 'flex';
+    document.getElementById('again').onclick = start;
+  }
+  function start() {
+    overlay.style.display = 'none'; build();
+    play(['l-intro'], 'Listen for the secret word. Then tap the picture you hear.', () => setTimeout(ask, 300));
+  }
+  function intro() {
+    overlay.innerHTML = '<div class="card"><img class="ear" src="img3d/ear.png" alt=""><h2>Listen for the secret word</h2>' +
+      '<p>All of these pictures start with <b style="color:var(--orange)">' + L + '</b>… except one!<br>Listen carefully and tap the word you hear.</p>' +
+      '<button class="btn" id="go">Play ▶</button></div>';
+    overlay.style.display = 'flex';
+    document.getElementById('go').onclick = start;
+  }
+
+  document.getElementById('repeat').onclick = () => { if (round < ROUNDS && overlay.style.display === 'none') ask(); };
+  muteBtn.textContent = muted ? '🔇' : '🔊';
+  muteBtn.onclick = () => { muted = !muted; muteBtn.textContent = muted ? '🔇' : '🔊'; if (muted && current) current.pause(); };
+
+  build();
+  if (q.get('autostart') === '1') start(); else intro();
+
+  // demo=N: answer N rounds automatically (for screenshots)
+  const demo = parseInt(q.get('demo') || '0', 10);
+  if (demo) {
+    overlay.style.display = 'none'; muted = true;
+    let n = 0;
+    const step = () => {
+      if (n >= demo || round >= ROUNDS) return;
+      if (busy) return setTimeout(step, 200);
+      const b = [...board.children].find(x => x.dataset.w === secrets[round]); choose(b); n++; setTimeout(step, 900);
+    };
+    setTimeout(step, 300);
+  }
+})();
+</script>
+</body>
+</html>

@@ -4,3 +4,7 @@ A phonics game: find every picture in the scene that starts with the target soun
 Open `index.html?sound=s` (or `a`, `t`, `p`).
 
 © Pioneers Tutoring. The pictures are from [Microsoft Fluent Emoji](https://github.com/microsoft/fluentui-emoji) (MIT licence). The voice is from ElevenLabs.
+
+## Listen for the secret word (listen.html)
+A grid of 9 pictures (8 start with the focus sound, 1 does not). The child hears a word and taps the matching picture. 6 rounds, then a score for first tries.
+Use `listen.html?sound=s` (s, a, t or p). Options: `mute=1`, `autostart=1`.
